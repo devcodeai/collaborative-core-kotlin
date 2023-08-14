@@ -25,19 +25,18 @@ class CompanyController(@Autowired private val companyRepository: CompanyReposit
 
     @PostMapping("")
     fun createCompany(@RequestBody company: Company): ResponseEntity<ApiResponse<Company>> {
-
-        if (company.name == null || company.address == null || company.email == null || company.phone == null) {
+        if (company.name.isNullOrEmpty()|| company.address.isNullOrEmpty() || company.email.isNullOrEmpty() || company.phone.isNullOrEmpty()) {
             val errorResponse = ApiResponse<Company>(
                 status = "Failed",
-                message = "Bad Request",
+                message = "Bad Request"
             )
-            return ResponseEntity.badRequest().body(errorResponse)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse)
         }
 
         val createdCompany = companyRepository.save(company)
         val response = ApiResponse(
             status = "Success",
-            message= "Fetch Companies Success",
+            message= "Create Company Success",
             data = createdCompany
         )
         return ResponseEntity.ok(response)
@@ -50,31 +49,67 @@ class CompanyController(@Autowired private val companyRepository: CompanyReposit
         if (company != null) {
             val response = ApiResponse(
                 status = "Success",
-                message= "Fetch Companies Success",
+                message= "Fetch Company with ID $companyId Success",
                 data = company
             )
             return ResponseEntity.ok(response)
         }
-        return ResponseEntity(HttpStatus.NOT_FOUND)
+
+        val errorResponse = ApiResponse<Company>(
+            status = "Not Found",
+            message= "Company with ID $companyId Not Found"
+        )
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
     }
 
     @PutMapping("/{id}")
-    fun updateCompanyById(@PathVariable("id") companyId: Int, @RequestBody company: Company): ResponseEntity<Company> {
+    fun updateCompanyById(@PathVariable("id") companyId: Int, @RequestBody company: Company): ResponseEntity<ApiResponse<Company>> {
+        if (company.name.isNullOrEmpty()|| company.address.isNullOrEmpty() || company.email.isNullOrEmpty() || company.phone.isNullOrEmpty()) {
+            val errorResponse = ApiResponse<Company>(
+                status = "Failed",
+                message = "Bad Request"
+            )
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse)
+        }
+
 
         val existingCompany = companyRepository.findById(companyId).orElse(null)
-            ?: return ResponseEntity(HttpStatus.NOT_FOUND)
 
-        val updatedCompany = existingCompany.copy(name = company.name, email = company.email)
+        if (existingCompany == null){
+            val errorResponse = ApiResponse<Company>(
+                status = "Not Found",
+                message= "Company with ID $companyId Not Found"
+            )
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
+        }
+
+
+        val updatedCompany = existingCompany.copy(name = company.name, email = company.email, phone = company.phone, address =  company.address)
         companyRepository.save(updatedCompany)
-        return ResponseEntity(updatedCompany, HttpStatus.OK)
+
+        val response = ApiResponse(
+            status = "Success",
+            message= "Update Company with ID $companyId Success",
+            data = updatedCompany
+        )
+        return ResponseEntity.ok(response)
     }
 
     @DeleteMapping("/{id}")
-    fun deleteUserById(@PathVariable("id") companyId: Int): ResponseEntity<Company> {
+    fun deleteUserById(@PathVariable("id") companyId: Int): ResponseEntity<ApiResponse<Company>> {
         if (!companyRepository.existsById(companyId)) {
-            return ResponseEntity(HttpStatus.NOT_FOUND)
+            val errorResponse = ApiResponse<Company>(
+                status = "Not Found",
+                message= "Company with ID $companyId Not Found"
+            )
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
         }
         companyRepository.deleteById(companyId)
-        return ResponseEntity(HttpStatus.NO_CONTENT)
+        val response = ApiResponse<Company>(
+            status = "Success",
+            message= "Delete Company with ID $companyId Success"
+        )
+        return ResponseEntity.ok(response)
     }
 }
