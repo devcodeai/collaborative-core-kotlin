@@ -3,19 +3,15 @@ version: '3.9'
 services: 
   kotlinapp: 
     container_name: kotlinapp
-    build: # this is the build context: .  
-      context: .
-      dockerfile: Dockerfile
-      args: # these are the arguments that are passed to the dockerfile
-        DB_URL: ${DB_URL} 
-        DB_USER: ${DB_USER}
-        DB_PASSWORD: ${DB_PASSWORD}
+    image: collaborative-core-kotlin
     ports: # port exposed to the host machine
-      - "8080:8080"
+      - "3030:3030"
     environment: # these are the environment variables that are passed to the dockerfile
-      DB_URL: jdbc:mysql://db:3306/devcode
-      DB_USER: root
-      DB_PASSWORD: password
+      MYSQL_HOST: db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+      MYSQL_DBNAME: devcode
+      MYSQL_PORT: 3306
     depends_on: # this is the dependency on the db service
       - db
   db:

@@ -1,5 +1,4 @@
-# Start with a base image containing Java runtime
-FROM amazoncorretto:17-alpine-jdk
+FROM openjdk:17-jdk-alpine
 
 # Create a directory
 WORKDIR /app
@@ -8,10 +7,10 @@ WORKDIR /app
 COPY . .
 
 # build the project avoiding tests
-RUN ./gradlew clean build -x test
+# RUN ./gradlew clean build -x test
 
 # Expose port 8080
-EXPOSE 8080
+EXPOSE 3030
 
 # Run the jar file
 CMD ["java", "-jar", "./build/libs/core-0.0.1-SNAPSHOT.jar"]
