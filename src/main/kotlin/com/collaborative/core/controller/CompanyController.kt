@@ -108,7 +108,8 @@ class CompanyController(@Autowired private val companyRepository: CompanyReposit
         companyRepository.deleteById(companyId)
         val response = ApiResponse<Company>(
             status = "Success",
-            message= "Delete Company with ID $companyId Success"
+            message= "Delete Company with ID $companyId Success",
+            data = Company(null, null, null, null, null)
         )
         return ResponseEntity.ok(response)
     }

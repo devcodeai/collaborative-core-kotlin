@@ -2,6 +2,7 @@ package com.collaborative.core.controller
 
 import com.collaborative.core.model.Product
 import com.collaborative.core.model.ApiResponse
+import com.collaborative.core.model.Campus
 import com.collaborative.core.model.ProductRequest
 import com.collaborative.core.repository.ProductRepository
 import com.collaborative.core.repository.CompanyRepository
@@ -9,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-
-
 
 @RestController
 @RequestMapping("/api/products")
@@ -55,7 +54,7 @@ class ProductController (@Autowired private val productRepository: ProductReposi
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
         }
 
-        val product = Product(id= 0 , name = productRequest.name!!, company = company)
+        val product = Product(id= 0 , name = productRequest.name, company = company)
         val createdProduct = productRepository.save(product)
         val response = ApiResponse(
             status = "Success",
@@ -114,7 +113,7 @@ class ProductController (@Autowired private val productRepository: ProductReposi
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
         }
 
-        val updatedProduct = existingProduct.copy(name = productRequest.name!!, company = company)
+        val updatedProduct = existingProduct.copy(name = productRequest.name, company = company)
         productRepository.save(updatedProduct)
 
         val response = ApiResponse(
@@ -137,7 +136,8 @@ class ProductController (@Autowired private val productRepository: ProductReposi
         productRepository.deleteById(productId)
         val response = ApiResponse<Product>(
             status = "Success",
-            message= "Delete Product with ID $productId Success"
+            message= "Delete Product with ID $productId Success",
+            data= Product(null, null, null)
         )
         return ResponseEntity.ok(response)
     }
