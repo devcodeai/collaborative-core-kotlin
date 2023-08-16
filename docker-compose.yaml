@@ -4,8 +4,9 @@ services:
   kotlinapp: 
     container_name: kotlinapp
     image: collaborative-core-kotlin
+    restart: always
     ports: # port exposed to the host machine
-      - "3030:3030"
+      - 8080:3030
     environment: # these are the environment variables that are passed to the dockerfile
       MYSQL_HOST: db
       MYSQL_USER: root
